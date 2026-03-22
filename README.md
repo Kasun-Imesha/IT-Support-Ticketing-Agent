@@ -101,6 +101,81 @@ This will start the application in your web browser. It usually opens automatica
 
 ---
 
+## Docker Setup
+
+### Using Docker Compose (Recommended)
+
+Docker Compose simplifies running the application with all dependencies pre-configured.
+
+#### Prerequisites
+- [Docker](https://www.docker.com/products/docker-desktop) and Docker Compose installed
+
+#### Quick Start
+
+1. **Create a `.env` file** in the project root:
+   ```
+   OPENAI_API_KEY=your_actual_api_key_here
+   STREAMLIT_PORT=8501
+   STREAMLIT_ADDRESS=0.0.0.0
+   ```
+
+2. **Start the application**:
+   ```bash
+   docker-compose up
+   ```
+   The application will be available at `http://localhost:8501`
+
+3. **Stop the application**:
+   ```bash
+   docker-compose down
+   ```
+
+#### Customization
+
+You can modify the port and other settings in the `.env` file:
+- `STREAMLIT_PORT` — Change the port (default: 8501)
+- `STREAMLIT_ADDRESS` — Change the bind address (default: 0.0.0.0)
+- `OPENAI_API_KEY` — Your OpenAI API key
+
+#### Data Persistence
+
+The Docker setup automatically mounts:
+- `./vector_store` — Chroma vector store (for traditional embeddings)
+- `./vector_store_faiss` — FAISS index (for fast similarity search)
+- `./data` — Knowledge base files
+
+These directories persist between container restarts.
+
+### Using Docker Directly
+
+If you prefer to build and run the Docker image manually:
+
+1. **Build the image**:
+   ```bash
+   docker build -t it-support-ai:latest .
+   ```
+
+2. **Run the container**:
+   ```bash
+   docker run -p 8501:8501 \
+     -e OPENAI_API_KEY=your_actual_api_key_here \
+     -v $(pwd)/vector_store:/app/vector_store \
+     -v $(pwd)/vector_store_faiss:/app/vector_store_faiss \
+     -v $(pwd)/data:/app/data \
+     it-support-ai:latest
+   ```
+
+3. **Access the application** at `http://localhost:8501`
+
+#### Volume Mounting
+
+Make sure to mount the necessary directories for data persistence:
+- `-v $(pwd)/vector_store:/app/vector_store` — Vector store persistence
+- `-v $(pwd)/vector_store_faiss:/app/vector_store_faiss` — FAISS index persistence
+- `-v $(pwd)/data:/app/data` — Knowledge base persistence
+
+---
+
 ## Troubleshooting
 
 ### "API key error" message

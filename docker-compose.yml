@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  it-support-ai:
+    build:
+      context: .
+      args:
+        STREAMLIT_PORT: ${STREAMLIT_PORT:-8501}
+        STREAMLIT_ADDRESS: ${STREAMLIT_ADDRESS:-0.0.0.0}
+    container_name: it-support-ai-assist
+    ports:
+      - "${STREAMLIT_PORT:-8501}:${STREAMLIT_PORT:-8501}"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - STREAMLIT_SERVER_PORT=${STREAMLIT_PORT:-8501}
+      - STREAMLIT_SERVER_ADDRESS=${STREAMLIT_ADDRESS:-0.0.0.0}
+      - STREAMLIT_SERVER_HEADLESS=true
+    volumes:
+      # Mount vector stores and data for persistence
+      - ./vector_store:/app/vector_store
+      - ./vector_store_faiss:/app/vector_store_faiss
+      - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - it-support-network
+
+networks:
+  it-support-network:
+    driver: bridge
