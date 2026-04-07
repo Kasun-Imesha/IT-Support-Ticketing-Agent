@@ -47,6 +47,64 @@ When you submit your issue, here's how our AI team works together to help you:
 
 ---
 
+## Policy Enforcement
+
+The IT Support AI Assist integrates a three-stage policy enforcement system to protect user privacy and ensure response quality:
+
+### 1. **Input Enforcement** (Before Processing)
+
+Every user submission is scanned for security and privacy risks:
+
+#### PII & Sensitive Data Detection
+- **Email Addresses** — Blocks messages containing email addresses
+- **Phone Numbers** — Detects and blocks phone numbers (international and local formats)
+- **Credit Card Numbers** — Prevents submission of payment card information
+- **Social Security Numbers** — Blocks US SSN patterns
+- **Passwords** — Warns when plaintext passwords are detected
+
+#### Content Safety Checks
+- **Length Validation** — Rejects trivially short (<10 chars) or excessively long (>2000 chars) inputs
+- **Prompt Injection Detection** — Identifies common prompt-injection attack patterns
+- **Offensive Language** — Flags abusive or offensive language (warning only)
+- **IT Relevance Check** — Warns if the message appears unrelated to IT support
+
+**What happens if a policy is violated?**
+- **Block (Blocking)**: Prevents submission entirely and displays error reasons
+- **Warn (Warning)**: Allows submission but alerts the user to potential issues
+
+### 2. **Main Processing Pipeline**
+
+If input enforcement passes, your message goes through the AI agents:
+
+1. **Classifier Agent** — Categorizes your IT issue
+2. **Knowledge Base Agent** — Searches the IT knowledge base for solutions
+3. **Notification Agent** — Escalates complex issues to the support team via email
+
+### 3. **Output Enforcement** (After AI Processing)
+
+Before returning the AI's response, the system checks for data leakage and quality issues:
+
+#### PII Leakage Prevention
+- **Email Redaction** — Masks any email addresses that appear in the AI response as `[EMAIL REDACTED]`
+- **Phone Redaction** — Masks any phone numbers in the response as `[PHONE REDACTED]`
+
+#### Response Quality Checks
+- **Minimum Length** — Warns if the AI provides an unusually short response
+- **Hallucination Detection** — Appends a disclaimer when the AI uses speculative language ("I think," "might be," etc.)
+- **Harmful Advice Blocking** — Blocks any responses suggesting destructive or dangerous commands
+
+### Customizing Policy Settings
+
+You can adjust policy enforcement by editing [policies/policy_config.py](policies/policy_config.py):
+
+- Set `"enabled": False` to disable a specific policy check
+- Change `"severity"` from `"block"` to `"warn"` (or vice versa) to adjust how strict a policy is
+- Modify threshold values (e.g., `min_chars`, `max_chars`) to fit your needs
+
+Example: To allow email addresses in input but still redact them from output, disable `detect_email_pii` in the INPUT_POLICIES section.
+
+---
+
 ## System Requirements
 
 To run this application, you'll need:
